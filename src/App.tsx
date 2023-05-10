@@ -1,8 +1,10 @@
 import React from 'react';
+import Table from './features/employees';
 
 function App() {
   return (
     <div className="App">
+      <Table />
       <header className="App-header">
         <p>
           Edit <code>src/App.tsx</code> and save to reload.

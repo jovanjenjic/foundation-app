@@ -7,24 +7,23 @@
  * @returns query string `(eg. foo=22&foo=11&baz=test.. )`
  */
 export const parseQueryString = <T extends Record<string, any>>(
-    args: T,
-    skip: string[] = [],
-    init: string[][] = []
-  ) => {
-    for (const [key, value] of Object.entries<T>(args)) {
-      // clear null or undefined values
-      if (value === null || value === undefined || skip.includes(key)) continue;
-  
-      // case when value is array
-      if (Array.isArray(value)) {
-        value.forEach((val) => {
-          init.push([key, `${val}`]);
-        });
-        continue;
-      }
-      // remove empties
-      if (`${value}`.length) init.push([key, `${value}`]);
+  args: T,
+  skip: string[] = [],
+  init: string[][] = [],
+) => {
+  for (const [key, value] of Object.entries<T>(args)) {
+    // clear null or undefined values
+    if (value === null || value === undefined || skip.includes(key)) continue;
+
+    // case when value is array
+    if (Array.isArray(value)) {
+      value.forEach((val) => {
+        init.push([key, `${val}`]);
+      });
+      continue;
     }
-    return new URLSearchParams(init).toString();
-  };
-  
+    // remove empties
+    if (`${value}`.length) init.push([key, `${value}`]);
+  }
+  return new URLSearchParams(init).toString();
+};

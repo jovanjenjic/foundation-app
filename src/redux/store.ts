@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { employeesApi } from '@features/employees/services/Employee.services';
 
@@ -10,7 +10,7 @@ export const store = configureStore({
   // Adding the api middleware enables caching, invalidation, polling,
   // and other useful features of `rtk-query`.
   middleware: (getDefaultMiddleware) =>
-  getDefaultMiddleware({}).concat([employeesApi.middleware]),
-})
+    getDefaultMiddleware({}).concat([employeesApi.middleware]),
+});
 
 setupListeners(store.dispatch);
