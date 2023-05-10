@@ -11,38 +11,37 @@ export const employeesApi = createApi({
   endpoints: (builder) => ({
     getEmployees: builder.query<Employee[], EmployeeQueryArgsData | void>({
       query: (args) => {
-        const queryString = args ? parseQueryString<EmployeeQueryArgsData>(args) : '';
+        const queryString = args
+          ? parseQueryString<EmployeeQueryArgsData>(args)
+          : '';
         return {
-            url: `/employees?${queryString}`,
-            requestParams: {
-              method: 'get'
-            }
-          };
+          url: `/employees?${queryString}`,
+          requestParams: {
+            method: 'get',
+          },
+        };
       },
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ _id }) => ({ type: "Employee" as const, id: _id })),
-              { type: "Employee", id: "LIST" },
+              ...result.map(({ _id }) => ({
+                type: 'Employee' as const,
+                id: _id,
+              })),
+              { type: 'Employee', id: 'LIST' },
             ]
-          : [{ type: "Employee", id: "LIST" }],
+          : [{ type: 'Employee', id: 'LIST' }],
       transformResponse: (response: EmployeesResponse) => response.employees,
     }),
     getEmployee: builder.query<Employee, string>({
       query(id) {
         return `employees/id/${id}`;
       },
-      transformResponse: (
-        response: Employee
-      ) => response,
+      transformResponse: (response: Employee) => response,
       providesTags: (result) => [{ type: 'Employee', id: result?._id }],
     }),
   }),
 });
 
-export const {
-  useGetEmployeesQuery,
-  useGetEmployeeQuery,
-  usePrefetch,
-} = employeesApi;
-
+export const { useGetEmployeesQuery, useGetEmployeeQuery, usePrefetch } =
+  employeesApi;
