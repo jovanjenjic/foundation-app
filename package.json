@@ -15,6 +15,7 @@
     "@types/node": "^16.18.27",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
+    "craco": "^0.0.3",
     "dotenv": "^16.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -24,9 +25,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -46,5 +47,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "craco-alias": "^3.0.1"
   }
 }

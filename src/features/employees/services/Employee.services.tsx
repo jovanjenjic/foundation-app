@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
-import { parseQueryString } from '../../../utils/parseQueryString';
+import { parseQueryString } from '@utils/parseQueryString';
 import { Employee, EmployeeQueryArgsData, EmployeesResponse } from '../types';
 
 const baseUrl = process.env.REACT_APP_SERVICE_URL;
