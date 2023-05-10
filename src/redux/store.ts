@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query';
-import { employeesApi } from '../features/employees/services/Employee.services';
+import { employeesApi } from '@features/employees/services/Employee.services';
 
 export const store = configureStore({
   reducer: {
