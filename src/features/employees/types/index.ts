@@ -39,6 +39,7 @@ export interface TablePaginationActionsProps {
 }
 
 export interface TableColumns {
+  _id: string;
   name: string;
   email: string;
   phoneNumber: string;

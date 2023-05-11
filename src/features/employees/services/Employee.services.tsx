@@ -19,9 +19,7 @@ export const employeesApi = createApi({
           : '';
         return {
           url: `/employees?${queryString}`,
-          requestParams: {
-            method: 'get',
-          },
+          method: 'get',
         };
       },
       providesTags: (result) =>
@@ -37,14 +35,27 @@ export const employeesApi = createApi({
       transformResponse: (response: EmployeesResponse) => response,
     }),
     getEmployee: builder.query<Employee, string>({
-      query(id) {
-        return `employees/id/${id}`;
-      },
+      query: (id) => ({
+        url: `employees/id/${id}`,
+        method: 'get',
+      }),
       transformResponse: (response: Employee) => response,
       providesTags: (result) => [{ type: 'Employee', id: result?._id }],
+    }),
+    deleteEmployee: builder.mutation<Employee, string>({
+      query: (id) => ({
+        url: `/employees/permanent-delete/${id}`,
+        method: 'delete',
+      }),
+      transformResponse: (response: Employee) => response,
+      invalidatesTags: (result) => [{ type: 'Employee', id: result?._id }],
     }),
   }),
 });
 
-export const { useGetEmployeesQuery, useGetEmployeeQuery, usePrefetch } =
-  employeesApi;
+export const {
+  useGetEmployeesQuery,
+  useGetEmployeeQuery,
+  useDeleteEmployeeMutation,
+  usePrefetch,
+} = employeesApi;
