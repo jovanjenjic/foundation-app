@@ -18,7 +18,7 @@ import AdbIcon from '@mui/icons-material/Adb';
 const pages = [{ name: 'Employees', url: 'employees' }];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-function Topbar() {
+const Topbar: React.FC = () => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null,
   );
@@ -26,18 +26,18 @@ function Topbar() {
     null,
   );
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>): void => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>): void => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = () => {
+  const handleCloseNavMenu = (): void => {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (): void => {
     setAnchorElUser(null);
   };
 
@@ -164,5 +164,5 @@ function Topbar() {
       </Container>
     </AppBar>
   );
-}
+};
 export default Topbar;
