@@ -1,17 +1,12 @@
 import * as React from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Container } from '@mui/material';
+import FlexContainer from '../FlexContainer';
 
-const Spinner = () => {
+const Spinner: React.FC = () => {
   return (
-    <Container maxWidth="xs">
-      <CircularProgress
-        style={{
-          display: 'flex',
-          margin: '0 auto',
-        }}
-      />
-    </Container>
+    <FlexContainer align="center" justify="center">
+      <CircularProgress />
+    </FlexContainer>
   );
 };
 
