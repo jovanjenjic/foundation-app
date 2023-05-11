@@ -1,62 +1,132 @@
 import * as React from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import {
-  useGetEmployeeQuery,
-  useGetEmployeesQuery,
-} from '@features/employees/services/Employee.services';
+import dayjs from 'dayjs';
+import TableHead from '@mui/material/TableHead';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableFooter from '@mui/material/TableFooter';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import TablePaginationActions from './TablePagination';
+import { useGetEmployeesQuery } from '../services/Employee.services';
+import { Column, TableColumns } from '../types';
+import { TimeDateFormat } from '../consts';
+import TableSpinner from './TableSpinner';
 
-const columns: GridColDef[] = [
-  // { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'name', headerName: 'Name', width: 130 },
-  // { field: 'zipCode', headerName: 'ZIP Code', width: 130 },
-  // { field: 'lastName', headerName: 'Last name', width: 130 },
-  // {
-  //   field: 'age',
-  //   headerName: 'Age',
-  //   type: 'number',
-  //   width: 90,
-  // },
-  // {
-  //   field: 'fullName',
-  //   headerName: 'Full name',
-  //   description: 'This column has a value getter and is not sortable.',
-  //   sortable: false,
-  //   width: 160,
-  //   valueGetter: (params: GridValueGetterParams) =>
-  //     `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-  // },
+const columns: readonly Column[] = [
+  { id: 'name', label: 'Name' },
+  { id: 'code', label: 'Email' },
+  { id: 'code', label: 'Phone number' },
+  { id: 'code', label: 'Date of birth' },
+  { id: 'code', label: 'Date of employment' },
+  { id: 'code', label: 'City' },
 ];
 
-const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-  { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-  { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-];
+const createData = ({
+  name,
+  email,
+  phoneNumber,
+  dateOfBirth,
+  dateOfEmployment,
+  city,
+}: TableColumns) => {
+  return { name, email, phoneNumber, dateOfBirth, dateOfEmployment, city };
+};
 
-export default function DataTable() {
-  const { data: employees } = useGetEmployeesQuery();
-  const response01 = useGetEmployeeQuery('6459fa173309d19af6f68399');
+const CustomPaginationActionsTable = () => {
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const dd = employees?.map((em) => ({ ...em, id: em?._id }));
-  return (
-    <div style={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={(dd as any) || []}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 5 },
-          },
-        }}
-        pageSizeOptions={[5, 10]}
-        // checkboxSelection
-      />
-    </div>
+  const { data, isLoading, isFetching } = useGetEmployeesQuery({
+    page: page + 1,
+    limit: rowsPerPage,
+  });
+
+  const rows = (data?.employees || []).map((row) =>
+    createData({ ...row, city: row?.homeAddress?.city }),
   );
-}
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
+  ): void => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  return (
+    <TableContainer style={{ position: 'relative' }} component={Paper}>
+      {(isFetching || isLoading) && <TableSpinner />}
+      <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
+        <TableHead>
+          <TableRow>
+            {columns.map((column) => (
+              <TableCell
+                key={column.id}
+                align={column.align}
+                style={{ minWidth: column.minWidth }}
+              >
+                {column.label}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map((row) => (
+            <TableRow key={row.name}>
+              <TableCell component="th" scope="row">
+                {row.name}
+              </TableCell>
+              <TableCell>{row.email}</TableCell>
+              <TableCell>{row.phoneNumber}</TableCell>
+              <TableCell>
+                {dayjs(row.dateOfBirth).format(TimeDateFormat.timeDate)}
+              </TableCell>
+              <TableCell>
+                {dayjs(row.dateOfEmployment).format(TimeDateFormat.timeDate)}
+              </TableCell>
+              <TableCell>{row.city}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TablePagination
+              rowsPerPageOptions={[
+                1,
+                2,
+                5,
+                10,
+                25,
+                { label: 'All', value: -1 },
+              ]}
+              colSpan={3}
+              count={data?.count || 0}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              SelectProps={{
+                inputProps: {
+                  'aria-label': 'rows per page',
+                },
+                native: true,
+              }}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              ActionsComponent={TablePaginationActions}
+            />
+          </TableRow>
+        </TableFooter>
+      </Table>
+    </TableContainer>
+  );
+};
+
+export default CustomPaginationActionsTable;

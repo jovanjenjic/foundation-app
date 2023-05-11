@@ -1,9 +1,9 @@
 export interface Employee {
   _id: string;
-  deletedAt: null | Date;
+  deletedAt: null | string;
   isDeleted: boolean;
-  dateOfBirth: Date;
-  dateOfEmployment: Date;
+  dateOfBirth: string;
+  dateOfEmployment: string;
   homeAddress: {
     addressLine1: string;
     addressLine2: string;
@@ -24,6 +24,33 @@ export interface EmployeesResponse {
 
 export interface EmployeeQueryArgsData {
   page?: number;
-  size?: number;
+  limit?: number;
   searchText?: string;
+}
+
+export interface TablePaginationActionsProps {
+  count: number;
+  page: number;
+  rowsPerPage: number;
+  onPageChange: (
+    event: React.MouseEvent<HTMLButtonElement>,
+    newPage: number,
+  ) => void;
+}
+
+export interface TableColumns {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  dateOfBirth: string;
+  dateOfEmployment: string;
+  city: string;
+}
+
+export interface Column {
+  id: 'name' | 'code' | 'population' | 'size' | 'density';
+  label: string;
+  minWidth?: number;
+  align?: 'right';
+  format?: (value: number) => string;
 }
