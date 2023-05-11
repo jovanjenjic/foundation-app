@@ -9,22 +9,30 @@ import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { Button } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import TablePaginationActions from './TablePagination';
-import { useGetEmployeesQuery } from '../services/Employee.services';
+import {
+  useDeleteEmployeeMutation,
+  useGetEmployeesQuery,
+} from '../services/Employee.services';
 import { Column, TableColumns } from '../types';
 import { TimeDateFormat } from '../consts';
 import TableSpinner from './TableSpinner';
 
 const columns: readonly Column[] = [
-  { id: 'name', label: 'Name' },
+  { id: 'code', label: 'Name' },
   { id: 'code', label: 'Email' },
   { id: 'code', label: 'Phone number' },
   { id: 'code', label: 'Date of birth' },
   { id: 'code', label: 'Date of employment' },
   { id: 'code', label: 'City' },
+  { id: 'code', label: 'Delete' },
 ];
 
 const createData = ({
+  _id,
   name,
   email,
   phoneNumber,
@@ -32,7 +40,7 @@ const createData = ({
   dateOfEmployment,
   city,
 }: TableColumns) => {
-  return { name, email, phoneNumber, dateOfBirth, dateOfEmployment, city };
+  return { _id, name, email, phoneNumber, dateOfBirth, dateOfEmployment, city };
 };
 
 const CustomPaginationActionsTable = () => {
@@ -44,8 +52,26 @@ const CustomPaginationActionsTable = () => {
     limit: rowsPerPage,
   });
 
-  const rows = (data?.employees || []).map((row) =>
-    createData({ ...row, city: row?.homeAddress?.city }),
+  const [deleteEmployee] = useDeleteEmployeeMutation();
+
+  const rows = React.useMemo(
+    () =>
+      (data?.employees || []).map((row) =>
+        createData({ ...row, city: row?.homeAddress?.city }),
+      ),
+    [data],
+  );
+
+  const handleDelete = React.useCallback(
+    async (employeeId: string): Promise<void | unknown> => {
+      try {
+        await deleteEmployee(employeeId).unwrap();
+        return;
+      } catch (e) {
+        return e;
+      }
+    },
+    [],
   );
 
   const handleChangePage = (
@@ -81,7 +107,7 @@ const CustomPaginationActionsTable = () => {
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.name}>
+            <TableRow key={row._id}>
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
@@ -94,20 +120,23 @@ const CustomPaginationActionsTable = () => {
                 {dayjs(row.dateOfEmployment).format(TimeDateFormat.timeDate)}
               </TableCell>
               <TableCell>{row.city}</TableCell>
+              <TableCell>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => handleDelete(row?._id)}
+                  endIcon={<DeleteIcon />}
+                >
+                  Delete
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
         <TableFooter>
           <TableRow>
             <TablePagination
-              rowsPerPageOptions={[
-                1,
-                2,
-                5,
-                10,
-                25,
-                { label: 'All', value: -1 },
-              ]}
+              rowsPerPageOptions={[1, 2, 5, 10, 25]}
               colSpan={3}
               count={data?.count || 0}
               rowsPerPage={rowsPerPage}
