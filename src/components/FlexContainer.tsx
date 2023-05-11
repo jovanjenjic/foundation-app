@@ -4,7 +4,7 @@ import React from 'react';
 const FlexContainer: React.FC<FlexContainerProps> = ({
   children,
   align = 'center',
-  justify = 'flex-start',
+  justify = 'center',
 }) => {
   const containerStyles: React.CSSProperties = {
     display: 'flex',

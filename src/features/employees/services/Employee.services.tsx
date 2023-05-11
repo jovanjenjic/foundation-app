@@ -9,7 +9,10 @@ export const employeesApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl }),
   tagTypes: ['Employee'],
   endpoints: (builder) => ({
-    getEmployees: builder.query<Employee[], EmployeeQueryArgsData | void>({
+    getEmployees: builder.query<
+      EmployeesResponse,
+      EmployeeQueryArgsData | void
+    >({
       query: (args) => {
         const queryString = args
           ? parseQueryString<EmployeeQueryArgsData>(args)
@@ -24,14 +27,14 @@ export const employeesApi = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ _id }) => ({
+              ...result.employees.map(({ _id }) => ({
                 type: 'Employee' as const,
                 id: _id,
               })),
               { type: 'Employee', id: 'LIST' },
             ]
           : [{ type: 'Employee', id: 'LIST' }],
-      transformResponse: (response: EmployeesResponse) => response.employees,
+      transformResponse: (response: EmployeesResponse) => response,
     }),
     getEmployee: builder.query<Employee, string>({
       query(id) {
