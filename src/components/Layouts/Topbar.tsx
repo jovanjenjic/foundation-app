@@ -15,7 +15,10 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 
-const pages = [{ name: 'Employees', url: 'employees' }];
+const pages = [
+  { name: 'Employees', url: 'employees' },
+  { name: 'Soft deleted employees', url: 'deleted-employees' },
+];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const Topbar: React.FC = () => {

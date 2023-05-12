@@ -53,5 +53,30 @@ export interface Column {
   label: string;
   minWidth?: number;
   align?: 'right';
-  format?: (value: number) => string;
+  format?: (value: number | string) => string;
+  row: string;
+  wrapper?: (rowId: string) => JSX.Element;
+}
+
+export interface ChangePageHandler {
+  (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number): void;
+}
+
+export interface ChangeRowsPerPageHandler {
+  (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void;
+}
+
+export interface DeleteHandler {
+  (employeeId: string): Promise<void | unknown>;
+}
+
+export interface TableInterface {
+  columns: readonly Column[];
+  rows: TableColumns[];
+  isLoading: boolean;
+  totalElement: number;
+  page: number;
+  rowsPerPage: number;
+  handleChangePage: ChangePageHandler;
+  handleChangeRowsPerPage: ChangeRowsPerPageHandler;
 }

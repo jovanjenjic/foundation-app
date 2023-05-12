@@ -3,7 +3,10 @@ import Layout from '@components/Layouts/Layout';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Spinner from '@components/Layouts/Spinner';
 
-const EmployeePage = lazy(() => import('@pages/Employee'));
+const EmployeeListPage = lazy(() => import('@pages/EmployeeListPage'));
+const DeletedEmployeesListPage = lazy(
+  () => import('@pages/DeletedEmployeesListPage'),
+);
 const Page404 = lazy(() => import('@pages/Page404'));
 
 const routes = [
@@ -15,7 +18,15 @@ const routes = [
         path: 'employees',
         element: (
           <Suspense fallback={<Spinner />}>
-            <EmployeePage />
+            <EmployeeListPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'deleted-employees',
+        element: (
+          <Suspense fallback={<Spinner />}>
+            <DeletedEmployeesListPage />
           </Suspense>
         ),
       },
