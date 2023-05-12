@@ -1,5 +1,4 @@
 import * as React from 'react';
-import dayjs from 'dayjs';
 import TableHead from '@mui/material/TableHead';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -9,88 +8,24 @@ import TableFooter from '@mui/material/TableFooter';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Button } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
 
 import TablePaginationActions from './TablePagination';
-import {
-  useDeleteEmployeeMutation,
-  useGetEmployeesQuery,
-} from '../services/Employee.services';
-import { Column, TableColumns } from '../types';
-import { TimeDateFormat } from '../consts';
+import { TableColumns, TableInterface } from '../types';
 import TableSpinner from './TableSpinner';
 
-const columns: readonly Column[] = [
-  { id: 'code', label: 'Name' },
-  { id: 'code', label: 'Email' },
-  { id: 'code', label: 'Phone number' },
-  { id: 'code', label: 'Date of birth' },
-  { id: 'code', label: 'Date of employment' },
-  { id: 'code', label: 'City' },
-  { id: 'code', label: 'Delete' },
-];
-
-const createData = ({
-  _id,
-  name,
-  email,
-  phoneNumber,
-  dateOfBirth,
-  dateOfEmployment,
-  city,
-}: TableColumns) => {
-  return { _id, name, email, phoneNumber, dateOfBirth, dateOfEmployment, city };
-};
-
-const CustomPaginationActionsTable = () => {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  const { data, isLoading, isFetching } = useGetEmployeesQuery({
-    page: page + 1,
-    limit: rowsPerPage,
-  });
-
-  const [deleteEmployee] = useDeleteEmployeeMutation();
-
-  const rows = React.useMemo(
-    () =>
-      (data?.employees || []).map((row) =>
-        createData({ ...row, city: row?.homeAddress?.city }),
-      ),
-    [data],
-  );
-
-  const handleDelete = React.useCallback(
-    async (employeeId: string): Promise<void | unknown> => {
-      try {
-        await deleteEmployee(employeeId).unwrap();
-        return;
-      } catch (e) {
-        return e;
-      }
-    },
-    [],
-  );
-
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number,
-  ): void => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
+const CustomPaginationActionsTable = ({
+  columns,
+  rows,
+  isLoading,
+  totalElement,
+  page,
+  rowsPerPage,
+  handleChangePage,
+  handleChangeRowsPerPage,
+}: TableInterface) => {
   return (
     <TableContainer style={{ position: 'relative' }} component={Paper}>
-      {(isFetching || isLoading) && <TableSpinner />}
+      {isLoading && <TableSpinner />}
       <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
         <TableHead>
           <TableRow>
@@ -108,28 +43,14 @@ const CustomPaginationActionsTable = () => {
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row._id}>
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell>{row.email}</TableCell>
-              <TableCell>{row.phoneNumber}</TableCell>
-              <TableCell>
-                {dayjs(row.dateOfBirth).format(TimeDateFormat.timeDate)}
-              </TableCell>
-              <TableCell>
-                {dayjs(row.dateOfEmployment).format(TimeDateFormat.timeDate)}
-              </TableCell>
-              <TableCell>{row.city}</TableCell>
-              <TableCell>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  onClick={() => handleDelete(row?._id)}
-                  endIcon={<DeleteIcon />}
-                >
-                  Delete
-                </Button>
-              </TableCell>
+              {columns.map(({ format, row: key, wrapper }) => (
+                <TableCell component="th" scope="row">
+                  {format
+                    ? format(row[key as keyof TableColumns])
+                    : row[key as keyof TableColumns] ||
+                      (wrapper && wrapper(row._id))}
+                </TableCell>
+              ))}
             </TableRow>
           ))}
         </TableBody>
@@ -138,7 +59,7 @@ const CustomPaginationActionsTable = () => {
             <TablePagination
               rowsPerPageOptions={[1, 2, 5, 10, 25]}
               colSpan={3}
-              count={data?.count || 0}
+              count={totalElement}
               rowsPerPage={rowsPerPage}
               page={page}
               SelectProps={{

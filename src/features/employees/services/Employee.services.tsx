@@ -34,6 +34,31 @@ export const employeesApi = createApi({
           : [{ type: 'Employee', id: 'LIST' }],
       transformResponse: (response: EmployeesResponse) => response,
     }),
+    getDeletedEmployees: builder.query<
+      EmployeesResponse,
+      EmployeeQueryArgsData | void
+    >({
+      query: (args) => {
+        const queryString = args
+          ? parseQueryString<EmployeeQueryArgsData>(args)
+          : '';
+        return {
+          url: `/employees/deleted?${queryString}`,
+          method: 'get',
+        };
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.employees.map(({ _id }) => ({
+                type: 'Employee' as const,
+                id: _id,
+              })),
+              { type: 'Employee', id: 'LIST' },
+            ]
+          : [{ type: 'Employee', id: 'LIST' }],
+      transformResponse: (response: EmployeesResponse) => response,
+    }),
     getEmployee: builder.query<Employee, string>({
       query: (id) => ({
         url: `employees/id/${id}`,
@@ -50,12 +75,22 @@ export const employeesApi = createApi({
       transformResponse: (response: Employee) => response,
       invalidatesTags: (result) => [{ type: 'Employee', id: result?._id }],
     }),
+    softDeleteEmployee: builder.mutation<Employee, string>({
+      query: (id) => ({
+        url: `/employees/soft-delete/${id}`,
+        method: 'delete',
+      }),
+      transformResponse: (response: Employee) => response,
+      invalidatesTags: (result) => [{ type: 'Employee', id: result?._id }],
+    }),
   }),
 });
 
 export const {
   useGetEmployeesQuery,
+  useGetDeletedEmployeesQuery,
   useGetEmployeeQuery,
   useDeleteEmployeeMutation,
+  useSoftDeleteEmployeeMutation,
   usePrefetch,
 } = employeesApi;
