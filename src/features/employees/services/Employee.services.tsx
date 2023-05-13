@@ -1,6 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
 import { parseQueryString } from '@utils/parseQueryString';
-import { Employee, EmployeeQueryArgsData, EmployeesResponse } from '../types';
+
+import {
+  Employee,
+  EmployeeQueryArgsData,
+  EmployeesResponse,
+  FormValues,
+} from '../types';
 
 const baseUrl = process.env.REACT_APP_SERVICE_URL;
 
@@ -73,7 +79,7 @@ export const employeesApi = createApi({
         method: 'delete',
       }),
       transformResponse: (response: Employee) => response,
-      invalidatesTags: (result) => [{ type: 'Employee', id: result?._id }],
+      invalidatesTags: () => [{ type: 'Employee', id: 'LIST' }],
     }),
     softDeleteEmployee: builder.mutation<Employee, string>({
       query: (id) => ({
@@ -81,7 +87,25 @@ export const employeesApi = createApi({
         method: 'delete',
       }),
       transformResponse: (response: Employee) => response,
-      invalidatesTags: (result) => [{ type: 'Employee', id: result?._id }],
+      invalidatesTags: () => [{ type: 'Employee', id: 'LIST' }],
+    }),
+    createEmployee: builder.mutation<Employee, FormValues>({
+      query: (employee) => ({
+        url: '/employees',
+        method: 'post',
+        body: employee,
+      }),
+      transformResponse: (response: Employee) => response,
+      invalidatesTags: () => [{ type: 'Employee', id: 'LIST' }],
+    }),
+    updateEmployee: builder.mutation<Employee, Employee>({
+      query: (employee) => ({
+        url: `/employees/${employee._id}`,
+        method: 'PATCH',
+        body: employee,
+      }),
+      transformResponse: (response: Employee) => response,
+      invalidatesTags: () => [{ type: 'Employee', id: 'LIST' }],
     }),
   }),
 });
@@ -92,5 +116,7 @@ export const {
   useGetEmployeeQuery,
   useDeleteEmployeeMutation,
   useSoftDeleteEmployeeMutation,
+  useCreateEmployeeMutation,
+  useUpdateEmployeeMutation,
   usePrefetch,
 } = employeesApi;

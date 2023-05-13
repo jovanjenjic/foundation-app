@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { Table } from '@base/features/employees';
+import { Table, DialogForm } from '@base/features/employees';
 import {
   useDeleteEmployeeMutation,
   useGetEmployeesQuery,
@@ -10,14 +10,16 @@ import {
   DeleteHandler,
   TableColumns,
 } from '@base/features/employees/types';
-import { TimeDateFormat } from '@base/features/employees/consts';
+import { TimeDateFormat } from '@base/features/employees/enums';
 import dayjs from 'dayjs';
 import { Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 const columns = (
   handlePermanentDelete: DeleteHandler,
   handleSoftDelete: DeleteHandler,
+  handleOpenEditDialog: (value: string) => void,
 ): readonly Column[] => [
   { id: 'code', label: 'Name', row: 'name' },
   { id: 'code', label: 'Email', row: 'email' },
@@ -65,6 +67,20 @@ const columns = (
       </Button>
     ),
   },
+  {
+    id: 'code',
+    label: 'Edit employee',
+    row: 'edit',
+    wrapper: (rowId) => (
+      <Button
+        endIcon={<EditIcon />}
+        variant="contained"
+        onClick={() => handleOpenEditDialog(rowId)}
+      >
+        Edit
+      </Button>
+    ),
+  },
 ];
 
 const createData = ({
@@ -80,8 +96,16 @@ const createData = ({
 };
 
 const EmployeeListPage = () => {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState<number>(0);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(5);
+  const [open, setOpen] = useState<boolean>(false);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>();
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedEmployeeId(null);
+  };
 
   const { data, isLoading, isFetching } = useGetEmployeesQuery({
     page: page + 1,
@@ -137,10 +161,27 @@ const EmployeeListPage = () => {
     [],
   );
 
+  const handleOpenEditDialog = (rowId: string): void => {
+    setSelectedEmployeeId(rowId);
+    handleOpen();
+  };
+
   return (
     <>
+      <DialogForm
+        open={open}
+        handleClose={handleClose}
+        employeeId={selectedEmployeeId}
+      />
+      <Button variant="contained" onClick={handleOpen}>
+        Create new
+      </Button>
       <Table
-        columns={columns(handlePermanentDelete, handleSoftDelete)}
+        columns={columns(
+          handlePermanentDelete,
+          handleSoftDelete,
+          handleOpenEditDialog,
+        )}
         rows={rows}
         isLoading={isLoading || isFetching}
         totalElement={data?.count || 0}

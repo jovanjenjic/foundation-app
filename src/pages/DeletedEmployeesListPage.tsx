@@ -3,7 +3,7 @@ import { Table } from '@base/features/employees';
 import { useGetDeletedEmployeesQuery } from '@base/features/employees/services/Employee.services';
 import { Column, TableColumns } from '@base/features/employees/types';
 import dayjs from 'dayjs';
-import { TimeDateFormat } from '@base/features/employees/consts';
+import { TimeDateFormat } from '@base/features/employees/enums';
 
 const columns = (): readonly Column[] => [
   { id: 'code', label: 'Name', row: 'name' },
