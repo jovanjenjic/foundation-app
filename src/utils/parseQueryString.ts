@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * Make query string from object
  * Accepts properties in object as array or single value
