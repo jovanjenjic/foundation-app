@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Table } from '@base/features/employees';
 import { useGetDeletedEmployeesQuery } from '@base/features/employees/services/Employee.services';
 import { Column, TableColumns } from '@base/features/employees/types';
@@ -53,19 +53,23 @@ const DeletedEmployeesListPage = () => {
     [data],
   );
 
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number,
-  ): void => {
-    setPage(newPage);
-  };
+  const handleChangePage = useCallback(
+    (
+      event: React.MouseEvent<HTMLButtonElement> | null,
+      newPage: number,
+    ): void => {
+      setPage(newPage);
+    },
+    [setPage],
+  );
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  const handleChangeRowsPerPage = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
+    },
+    [setRowsPerPage, setPage],
+  );
 
   return (
     <Table

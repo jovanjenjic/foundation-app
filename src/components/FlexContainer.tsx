@@ -12,6 +12,7 @@ const FlexContainer: React.FC<FlexContainerProps> = ({
     justifyContent: justify,
   };
 
+  // Wrapper around the component that will position the children
   return <div style={containerStyles}>{children}</div>;
 };
 
