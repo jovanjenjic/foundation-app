@@ -6,7 +6,7 @@ const Layout: React.FC = () => {
   return (
     <div>
       <Topbar />
-      <main>
+      <main style={{ margin: '30px' }}>
         <Outlet />
       </main>
     </div>

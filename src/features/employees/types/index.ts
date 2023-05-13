@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface Employee {
   _id: string;
   deletedAt: null | string;
@@ -79,4 +81,24 @@ export interface TableInterface {
   rowsPerPage: number;
   handleChangePage: ChangePageHandler;
   handleChangeRowsPerPage: ChangeRowsPerPageHandler;
+}
+
+export interface FormInterface {
+  open: boolean;
+  handleClose: () => void;
+  employeeId?: string | null;
+}
+
+export interface FormValues {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  homeAddress: {
+    city: string;
+    ZIPCode: string;
+    addressLine1: string;
+    addressLine2: string;
+  };
+  dateOfEmployment: string;
+  dateOfBirth: string;
 }
