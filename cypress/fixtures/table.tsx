@@ -122,6 +122,7 @@ const onOpenEditDialog = (value: string): void => {
   console.log(value);
 };
 
+// The data that will be used to test the table
 export const tableProps = {
   rows: rows,
   columns: columns(onPermanentDelete, onSoftDelete, onOpenEditDialog),
