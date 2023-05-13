@@ -39,7 +39,6 @@ const createData = ({
 const DeletedEmployeesListPage = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
   const { data, isLoading, isFetching } = useGetDeletedEmployeesQuery({
     page: page + 1,
     limit: rowsPerPage,
